@@ -1,0 +1,697 @@
+<?php
+
+/**
+ * @file
+ * Schema info, updates and any other install/uninstall tasks.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function imgbrew_items_schema() {
+	
+	// Init
+	$schema = array();
+	$types = array(
+		'commercial' => 'Commercial',
+		'documentary' => 'Documentary',
+		'industrial' => 'Industrial',
+		'product' => 'Product',
+	);
+
+	// HOME PAGE
+	$schema['imgbrew_video'] = array(
+
+		'description' => 'Base table for imgbrew_video',
+
+		'fields' => array(
+
+			//name title text
+			'title' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Title',
+					'#required' => TRUE,		
+				),
+			),
+
+			// Description of Video
+			'description' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Video Description',
+				),
+			),
+
+			//video thumbnail img
+			'thumbnail' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'form' => array(
+					'#type' => 'managed_file',
+					'#required' => TRUE,
+					'#title' => 'Video Thumbnail',
+					'#upload_location' => 'public://video_thumbnail',
+					'#upload_validators' => array(
+					  'file_validate_size' => array(1048576),
+					),
+				),
+			),
+
+			//vimeo link
+			'vimeo_id' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Vimeo ID',
+					'#required' => TRUE,
+					),
+				),
+				
+			// Type
+			'video_type' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => 'company',
+				'form' => array(
+					'#type' => 'select',
+					'#title' => 'Type',
+					'#required' => TRUE,
+					'#options' => $types
+				),
+			),
+
+			'weight' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'default' => 0,
+			),
+
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+
+	// ABOUT PAGE
+	$schema['imgbrew_about_page'] = array(
+
+		'description' => 'Base table for imgbrew_about_page',
+
+		'fields' => array(
+
+			//Company Description text area
+			'about_intro' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'About Intro',
+				),
+			),
+
+			// Process Graphic
+			'process_graphic' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'form' => array(
+					'#type' => 'managed_file',
+					'#title' => 'Process Graphic',
+					'#upload_location' => 'public://process_graphic',		
+				),
+			),
+
+			'press' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Press',
+				),
+			),
+
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+
+//  ABOUT PAGE TEAM
+	$schema['imgbrew_team_member'] = array(
+
+		'description' => 'Base table for team',
+
+		'fields' => array(
+
+			// Name
+			'title' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Name',
+					'#required' => TRUE,
+				),
+			),
+
+			// Bio
+			'bio' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Bio',
+				),
+			),
+
+			// Photo
+			'team_photo' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'form' => array(
+					'#type' => 'managed_file',
+					'#title' => 'Photo',
+					'#upload_location' => 'public://team_member_photo',		
+				),
+			),
+
+			'weight' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'default' => 0,
+			),
+
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+	//  ABOUT PAGE BRANDS
+	$schema['imgbrew_brand'] = array(
+
+		'description' => 'Base table for brand',
+
+		'fields' => array(
+
+			'title' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'form' => array(
+					'#type' => 'textfield',
+					'#required' => TRUE,
+					'#description' => 'Only used for organization, not display.'
+				),
+			),
+
+			'brand_photo' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'form' => array(
+					'#type' => 'managed_file',
+					'#title' => 'Brand Photo',
+					'#upload_location' => 'public://brand_photo',		
+				),
+			),
+
+			'weight' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'default' => 0,
+			),
+		
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+
+	// CONTACT PAGE
+	$schema['imgbrew_contact_page'] = array(
+
+		'description' => 'Base table for imgbrew_contact_page',
+
+		'fields' => array(
+
+			'body' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Body Text',
+				),
+			),
+
+			'image' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+				'form' => array(
+					'#type' => 'managed_file',
+					'#title' => 'Image',
+					'#upload_location' => 'public://contact_image',
+				),
+			),
+
+			//Email
+			'email' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Email',
+					'#required' => TRUE,
+				),
+			),
+
+			//Address
+			'address' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Address',
+					'#required' => TRUE,
+					'#attributes' => array(
+						'class' => array('no-wysiwyg'),
+					),
+				),
+			),
+
+			// Phone Number
+			'phone_number' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Phone Number',
+					'#required' => TRUE,
+				),
+			),
+
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+	// RENTALS PAGE
+	$schema['imgbrew_rentals'] = array(
+
+		'description' => 'Base table for rentals',
+
+		'fields' => array(
+
+			// rentals text
+			'rentals_text' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Rentals text',
+				),
+			),
+		
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+	// CLIENTS
+	$schema['imgbrew_client'] = array(
+
+		'description' => 'Base table for clients',
+
+		'fields' => array(
+
+			'title' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Name',
+					'#required' => TRUE,
+					'#description' => 'Only letters and numbers allowed',
+				),
+ 			),
+
+ 			'short_name' => array(
+ 				'type' => 'varchar',
+ 				'length' => 255,
+ 				'not null' => TRUE,
+ 				'default' => '',
+ 				'form' => array(
+ 					'#type' => 'hidden',
+ 				),
+ 			),
+
+ 			'cuid' => array(
+ 				'type' => 'int',
+ 				'description' => 'UID of created client user account',
+ 				'unsigned' => TRUE,
+ 				'form' => array(
+ 					'#type' => 'hidden',
+ 				),
+ 			),
+
+ 			'rid' => array(
+ 				'type' => 'int',
+ 				'description' => 'ID of role created',
+ 				'unsigned' => TRUE,
+ 				'form' => array(
+ 					'#type' => 'hidden',
+ 				),
+ 			),
+
+ 			'notified' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+				'form' => array(
+					'#type' => 'hidden',
+				),
+ 			),
+
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+	// Client Posts
+	$schema['imgbrew_client_post'] = array(
+		
+		'description' => 'Base table for client posts',
+		
+		'fields' => array(
+
+			'title' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Title',
+					'#required' => TRUE,
+				),
+			),
+
+			'vimeo_id' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textfield',
+					'#title' => 'Vimeo ID',
+					'#required' => TRUE,
+					),
+				),
+
+			'notes' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Notes',
+				),
+			),
+
+			'parent_id' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+			),
+
+			'parent_type' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'weight' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'default' => 0,
+			),
+
+		),
+		
+		'primary key' => array('id'),
+	);
+
+	$schema['imgbrew_press'] = array(
+
+		'description' => 'Base table for press page',
+
+		'fields' => array(
+		
+			'body' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Body Text',
+				),
+			),
+		
+		),
+
+	);
+
+	/*
+	 * Default fields
+	 *
+	 * This array of fields will be added onto the beginning of all schemas.
+	 */
+	$defaults = array(
+
+		'id' => array(
+			'type' => 'serial',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'form' => array(
+				'#type' => 'hidden',
+			),
+		),
+	
+		'created' => array(
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 0
+		),
+	
+		'changed' => array(
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 0,
+		),
+	
+		'uid' => array(
+			'type' => 'int',
+			'unsigned' => TRUE,
+		),
+		
+		'type' => array(
+			'type' => 'varchar',
+			'length' => 255,
+			'not null' => TRUE,
+			'default' => '',
+		),
+		
+		'type_label' => array(
+			'type' => 'varchar',
+			'length' => 255,
+			'not null' => TRUE,
+			'default' => '',
+		),
+
+	);
+
+	// Loop through schema
+	foreach ( $schema as $index => $item_schema ) {
+		
+		// Merge default fields onto fields array
+		$schema[$index]['fields'] = array_merge($defaults, $schema[$index]['fields']);
+
+		// Add primary key
+		$schema[$index]['primary key'] = array('id');
+
+	}
+
+	return $schema;
+
+}
+
+// Add Brand title field
+function imgbrew_items_update_7001() {
+
+	// Spec
+	$spec = array(
+		'type' => 'varchar',
+		'length' => 255,
+		'not null' => TRUE,
+		'default' => '',
+	);
+
+	db_add_field('imgbrew_brand', 'title', $spec);
+
+}
+
+// Add notified timestamp field
+function imgbrew_items_update_7002() {
+
+	$spec = array(
+		'type' => 'int',
+		'unsigned' => TRUE,
+		'not null' => TRUE,
+		'default' => 0,
+	);
+
+	db_add_field('imgbrew_client', 'notified', $spec);
+
+}
+
+// Add contact page body field
+function imgbrew_items_update_7003() {
+
+	$spec = array(
+		'type' => 'text',
+		'size' => 'medium',
+	);
+
+	db_add_field('imgbrew_contact_page', 'body', $spec);
+
+}
+
+// Add contact image
+function imgbrew_items_update_7004() {
+
+	$spec = array(
+		'type' => 'int',
+		'unsigned' => TRUE,
+		'not null' => TRUE,
+		'default' => 0,
+	);
+
+	db_add_field('imgbrew_contact_page', 'image', $spec);
+
+}
+
+// Add Press page
+function imgbrew_items_update_7005() {
+
+	$schema['imgbrew_press'] = array(
+
+		'description' => 'Base table for press page',
+
+		'fields' => array(
+		
+			'id' => array(
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'form' => array(
+					'#type' => 'hidden',
+				),
+			),
+		
+			'created' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0
+			),
+		
+			'changed' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			),
+		
+			'uid' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+			),
+			
+			'type' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+			
+			'type_label' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'body' => array(
+				'type' => 'text',
+				'size' => 'medium',
+				'form' => array(
+					'#type' => 'textarea',
+					'#title' => 'Body Text',
+				),
+			),
+		
+		),
+
+	'primary key' => array('id'),
+
+	);
+
+	db_create_table('imgbrew_press', $schema['imgbrew_press']);
+
+}
+
+// Add Press field to about entity and remove press entity
+function imgbrew_items_update_7006() {
+
+	$spec = array(
+		'type' => 'text',
+		'size' => 'medium',
+	);
+
+	$table = 'imgbrew_press';
+
+	// Add field
+	db_add_field('imgbrew_about_page', 'press', $spec);
+
+	// Drop table
+	$exists = db_table_exists($table);
+	
+	if ( $exists ) {
+		db_drop_table($table);
+	}
+
+
+}

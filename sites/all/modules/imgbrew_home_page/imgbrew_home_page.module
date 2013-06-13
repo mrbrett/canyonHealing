@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * The module for the Homepage callback and related content.
+ */
+
+/**
+ *	Implements hook_menu()
+ */
+function imgbrew_home_page_menu() {
+
+	$items = array();
+
+	// Home Page`
+	$items['homepage'] = array(
+		'title' => 'Homepage',
+		'page callback' => 'imgbrew_home_page',
+		'file' => 'imgbrew_home_page.inc',
+		'access arguments' => array('access content'),
+		'type' => MENU_CALLBACK,
+	);
+
+	return $items;
+
+}

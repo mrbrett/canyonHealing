@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * The module for the Contactpage callback and related content.
+ */
+
+/**
+ *	Implements hook_menu()
+ */
+function imgbrew_contact_page_menu() {
+
+	$items = array();
+
+	// Contact Page`
+	$items['contact'] = array(
+		'title' => 'Contactpage',
+		'page callback' => 'imgbrew_contact_page',
+		'file' => 'imgbrew_contact_page.inc',
+		'access arguments' => array('access content'),
+		'type' => MENU_CALLBACK,
+	);
+
+	// Rentals page
+	$items['rentals'] = array(
+		'title' => 'Rentals',
+		'page callback' => 'imgbrew_contact_rentals_page',
+		'file' => 'imgbrew_contact_page.inc',
+		'access arguments' => array('access content'),
+		'type' => MENU_CALLBACK,
+	);
+
+	return $items;
+
+}

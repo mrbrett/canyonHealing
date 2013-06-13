@@ -1,0 +1,6 @@
+name = Image Brew Contactpage
+description = The page callback and related content for the Image Brew Contactpage
+core = 7.x
+package = Cirro
+
+dependencies[] = cirro_core

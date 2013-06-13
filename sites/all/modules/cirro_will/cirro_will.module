@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ *   Will's dev space
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function cirro_will_menu() {
+
+	// Init
+	$items = array();
+
+	$items['admin/will'] = array(
+		'title' => 'Will dev',
+		'page callback' => 'cirro_will_admin_page',
+		'access arguments' => array('claro super'),
+		'type' => MENU_CALLBACK,
+	);
+
+	return $items;
+
+}
+
+/**
+ * Build Will admin page
+ */
+function cirro_will_admin_page() {
+
+	// Init
+	$html = 'HELLO WEB';
+
+
+	dsm(variable_get('will_role', 'empty'));
+
+	return $html;
+
+}

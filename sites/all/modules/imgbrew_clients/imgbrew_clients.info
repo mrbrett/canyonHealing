@@ -1,0 +1,6 @@
+name = Image Brew Clients
+description = Client Portal Shiz
+core = 7.x
+package = Cirro
+
+dependencies[] = cirro_core

@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * @file
+ *   Ian's dev space
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function cirro_ian_menu() {
+
+	// Init
+	$items = array();
+
+	$items['admin/ian'] = array(
+		'title' => 'Ian dev',
+		'page callback' => 'cirro_ian_admin_page',
+		'access arguments' => array('claro super'),
+		'type' => MENU_CALLBACK,
+	);
+
+	return $items;
+
+}
+
+/**
+ * Build Will admin page
+ */
+function cirro_ian_admin_page() {
+
+	// Init
+	$html = 'HELLO Mr. STARZ';
+	$module_path = drupal_get_path('module', 'cirro_ian');
+	$js_path = '';
+
+	$html .= "
+		<div class=\"row\">
+			<div class=\"span6\">
+				<textarea class=\"no-wysiwyg\"></textarea>
+			</div>
+		</div>
+	";
+
+	// Add JS to the page
+	$js_path = "$module_path/js/cirro_ian.js";
+	drupal_add_js($js_path, array('scope' => 'footer'));
+
+	return $html;
+
+}
+
+/**
+ * Cirro AJAX valid test callback
+ */
+function valid_ajax_callback_cjax( $data ) {
+
+	// Return the data back
+	return array(
+		'status' => 'pass',
+		'valid' => TRUE,
+		'data' => $data,
+	);
+
+}
+
+/**
+ * Cirro AJAX invalid test callback
+ */
+function invalid_ajax_callback( $data ) {
+
+	// Return the data back
+	return array(
+		'status' => 'pass',
+		'valid' => FALSE,
+		'data' => $data,
+	);
+
+}

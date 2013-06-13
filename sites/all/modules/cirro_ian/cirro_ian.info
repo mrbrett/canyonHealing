@@ -1,0 +1,6 @@
+name = Ian's dev Space
+description = Ian's dev Space
+core = 7.x
+package = Cirro
+
+files[] = php_debug_class.inc

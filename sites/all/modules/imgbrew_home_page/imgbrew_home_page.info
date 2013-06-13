@@ -1,0 +1,6 @@
+name = Image Brew Homepage
+description = The page callback and related content for the Image Brew Homepage
+core = 7.x
+package = Cirro
+
+dependencies[] = cirro_core

@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ *   Brandon's dev space
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function cirro_brandon_menu() {
+	
+	// Init
+	$items = array();
+	
+	$items['admin/brandon'] = array(
+		'title' => 'Bitch, please.',
+		'page callback' => 'cirro_brandon_test_page',
+		'access arguments' => array('claro super'),
+		'type' => MENU_CALLBACK,
+	);
+	
+	return $items;
+}
+
+function cirro_brandon_test_page() {	
+	
+	// Init
+	$html = "HELLO B'RANDON";
+	
+	
+	
+	
+	
+	
+	
+	
+	return $html;
+
+}

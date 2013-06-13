@@ -1,0 +1,570 @@
+//  CIRRO CUSTOM SASS
+//
+
+
+//  Stuff to hide
+// ----------------------------------------------------------------------------
+.filter-help,
+.tips,
+.grippie
+	display: none
+
+// Staff Header
+// ----------------------------------------------------------------------------
+.cirro-header
+	width: 100%
+	height: 25px
+	background: rgba(0,0,0,0.7)
+	overflow: hidden
+	font-family: $baseFontFamily
+	ul.cirro-header-links
+		float: right
+		margin: 2.5px 30px
+		li
+			float: left
+			margin-right: 15px
+			a
+				color: white
+				font-weight: 600
+
+// Dashboard
+// ----------------------------------------------------------------------------
+body.page-admin-dash h2
+	border-bottom: 3px solid
+
+.dash-section
+	margin-bottom: 50px
+
+.box-border
+	min-height: 20px
+	padding: 19px
+	margin-bottom: 20px
+	border: 2px solid black
+
+.edit-primary-links,
+.reorder-links
+	margin: 10px 0
+	a
+		color: black
+		font-weight: bold
+	i
+		margin-top: 0px !important
+
+#cirro-dash-filter
+	.form-type-select,
+	label
+		display: inline
+		margin-right: 20px
+
+#cirro-core-entity-delete-form
+	.alert
+		background-color: #ed5b25
+		color: white
+		max-width: 350px
+		text-shadow: none
+
+// Multi Tools
+// ----------------------------------------------------------------------------
+
+.multi-acc-button
+	cursor: pointer
+	margin-bottom: 10px
+	&:hover
+		color: $pink
+
+.multi-acc-content
+	display: none
+
+.multi-tool-thumb-col
+	width: 125px
+
+.multi-tool-data-col
+	width: 340px
+
+//  General Classes
+// ----------------------------------------------------------------------------
+
+#toolbar
+	background: none
+	+box-shadow(none)
+	div.toolbar-menu
+		background: rgba(0,0,0,0.7)
+
+body.toolbar
+	padding-top: 50px !important
+
+#nav
+	float: right
+	ul
+		a
+			color: $navbarText
+			+transition(0.3s)
+			.icon-user
+				+opacity(50)
+			&.active
+				color: white
+			&:hover
+				text-decoration: none
+				color: white
+			li
+				display: inline
+				list-style: none
+				padding: 0 0 0 30px
+				
+.right
+	float: right
+	
+.left
+	float: left
+
+label
+	strong
+		font-weight: 300
+
+
+div.admin .left
+	margin: 0
+	width: 49%
+
+div.admin .right
+	width: 49%
+
+.field-type-text-with-summary
+	overflow: hidden
+	margin-right: 0 0 20px 0
+
+div.admin-panel
+	background: #eee
+	padding: 15px
+	margin: 0 0 10px 0
+	+border-radius(5px)
+	&:hover
+		background: $neonYellow
+		li.leaf
+			border-bottom: 1px solid #999 
+			a
+				color: $textColor
+				&:hover
+					text-decoration: underline
+	h3
+		padding: 0 0 0 8px
+		margin: 0 0 10px 0
+	.description
+		font-size: 11.5px
+		color: $grayLight
+		font-style: italic
+		
+ul.admin-list
+	margin: 0
+	padding: 0
+	li.leaf
+		list-style: none
+		list-style-image: none
+		border-bottom: 1px solid #CCC
+		padding: 10px 0
+		margin: 0 0 7px 0
+		a
+			font-size: 15px
+			font-weight: 300
+	li
+		margin: 0 0 7px 0
+		border-bottom: 1px solid #CCC
+		padding: 10px 0
+		.label
+			padding: 0
+			background-color: transparent
+			text-shadow: none
+			font-size: 15px
+			font-weight: 300
+
+.description
+	font-size: 11px
+	color: $grayLight
+	font-weight: 300
+	margin-top: 5px
+
+.tabledrag-toggle-weight-wrapper
+	text-align: left
+
+.form-item .description
+	line-height: 1.3em
+	width: 100%
+	max-width: 530px
+
+#permissions td.module 
+	background: #ddd
+	font-size: 15px
+	font-weight: 300
+
+.fieldset-title
+	font-size: 18px
+
+fieldset.filter-wrapper
+	margin: 0 0 30px 0
+	padding: 0
+
+.search-form
+	margin-bottom: 40px 
+
+.center
+	margin: 0 auto
+
+.clearfix
+	overflow: hidden
+
+.loading-gif
+	height: 100%
+	width: 100%
+	background: url(../images/loading.gif) no-repeat center 100px $bg
+	position: absolute
+	top: 0
+	left: 0
+	z-index: 9000
+
+.btn-load-wrap
+	display: inline-block
+	position: relative
+
+.loading-gif-element
+	height: 30px
+	width: 30px
+	background: url(../images/loading.gif) no-repeat center center
+	position: absolute
+	right: -45px
+	top: 6px
+	z-index: 9000
+	display: none
+	.medium
+		height: 20px
+		width: 20px
+		background: url(../images/loading_medium.gif) no-repeat center center
+	.small
+		height: 10px
+		width: 10px
+		background: url(../images/loading_small.gif) no-repeat center center
+
+tr.draggable
+	&.add-new
+		background-color: $neonYellow
+		td
+			background-color: $neonYellow
+			div.description
+				color: $textColor
+
+table.sticky-header
+	z-index: 400
+	+border-radius(0)
+	* th
+		+border-radius(0 !important)
+
+a#edit-cancel
+	margin: 30px
+	position: relative
+	&:before
+		content: "X"
+		position: absolute
+		left: -12px
+		top: -1px
+		font-weight: 700
+
+.theme-default h3
+	font-weight: 300
+
+ul.action-links
+	padding: 0	
+	margin: 0 0 20px 0
+
+.macro
+	height: 110px
+
+.fixed
+	position: fixed
+
+.green
+	color: $green
+
+.red
+	color: $red
+
+.blue
+	color: $blue
+
+.orange
+	color: $orange
+
+.orange
+	color: $orange
+
+.confirmed
+	//color: lighten(black, 65)
+
+// ADMIN TABS
+// ----------------------------------------------------------------------------
+
+ul.primary
+	border-bottom: none
+	margin-left: 0
+	list-style: none
+	text-align: center
+	@include clearfix()
+	li 
+		display: inline
+		a
+			display: inline-block
+			padding: 5px 14px
+			background-color: #fff
+			border: 1px solid $grayLighter
+			@include border-radius(2px)
+			color: $grayLight
+			&:hover 
+				text-decoration: none
+				background-color: #f5f5f5
+				border: 1px solid #ccc
+			&.active
+				border: 1px solid $grayLight
+				background-color: $grayLight
+				color: white
+
+ul.secondary
+	border-bottom: none
+	margin: 20px 0
+	padding: 0
+	ul.secondary
+		border-bottom: none
+		margin-left: 0
+		list-style: none
+		text-align: left
+		@include clearfix()
+		li 
+			display: inline
+			border: none
+			padding: 0 1em 0 0
+			a
+				display: inline-block
+				padding: 1px 10px
+				background-color: #fff
+				border: 1px solid #ddd
+				font-size: 11px
+				color: $textColor
+				@include border-radius(2px)
+				&:hover 
+					text-decoration: none
+					background-color: #f5f5f5
+					border: 1px solid #ccc
+				&.active
+					border: 1px solid #ccc
+					background-color: #f5f5f5
+
+div.action-links
+	margin: 20px 0 0 0
+	padding: 0
+	list-style-type: none
+	overflow: hidden
+
+div.action-links .action-btn
+	border: 1px solid $neonYellow
+	padding: 50px 0
+	text-align: center
+	+border-radius(5px)
+	font-size: 16px
+	color: #333
+	background: $neonYellow
+	font-weight: bold
+	margin-bottom: 20px
+	&:hover
+		border: 1px solid #aaa
+
+ul.action-links a
+	padding-left: 15px
+	line-height: 18px
+	position: relative
+	&:before
+		content: "+"
+		position: absolute
+		left: 3px
+		top: -4px
+		font-size: 16px
+		font-weight: bold
+		
+
+.item-list ul li
+	margin: 0
+
+
+// Header
+// ----------------------------------------------------------------------------
+
+#logo
+	margin: 8px 0 0 0
+	width: 150px
+	float: left
+
+#un
+	float: right
+	font-size: 11px
+	color: white
+
+.theme-selector
+	float: left
+	width: 30%
+	.theme-info
+		clear: both
+
+
+// Vertical Tabs
+// ----------------------------------------------------------------------------
+
+div.vertical-tabs-panes
+	padding: 0
+
+div.vertical-tabs 
+	border: none
+	margin: 30px 0
+	position: relative
+
+div.vertical-tabs fieldset
+	border: 0
+	padding: 0
+	margin: 0
+
+.fieldset-wrapper
+	margin-bottom: 30px
+	
+.exposed-filters 
+	.filters
+		width: 100%
+		float: none
+	.form-item
+		margin: 0 20px 0 0
+		width: 220px
+		float: left
+
+div.vertical-tabs fieldset div.fieldset-wrapper 
+	top: -20px
+	padding: 0 20px
+
+div.vertical-tabs .vertical-tabs-list
+	border-bottom: none
+	float: left
+	font-size: 1em
+	line-height: 1
+	padding: 0
+	width: 180px
+	li
+		background: #eee
+		+border-top-left-radius(4px)
+		+border-bottom-left-radius(4px)
+		border: 1px solid #eee
+		border-width: 1px 0 1px 1px
+		margin: 10px 0
+		outline: none
+		&:hover
+			border: 1px solid #ddd
+			border-width: 1px 0 1px 1px
+			background: #ddd
+			outline: none
+		&.selected
+			margin-right: -1px
+			border: 1px solid #ccc
+			border-width: 1px 0 1px 1px
+			background: $bodyBackground
+			&:hover
+				background: $bodyBackground
+		a
+			color: #333
+			&:hover
+				border: none
+				outline: none
+				text-decoration: none
+				strong
+					text-decoration: none
+			.summary
+				color: #888
+				font-size: 11px
+
+.vertical-tabs  .nav-tabs > li
+	float: none
+
+.vertical-tabs ul.vertical-tabs-list
+	margin: 0
+	border-top: none
+	border-right: 1px solid #ccc
+	padding: 0 0 70px 0
+
+.vertical-tabs  .nav-tabs > li > a
+	min-width: 74px
+	margin-right: 0
+	margin-bottom: 3px
+
+// Tabs on the left
+.vertical-tabs .nav-tabs
+	float: left
+	margin-right: 19px
+	border-right: 1px solid #ddd
+
+.vertical-tabs .nav-tabs > li > a
+	margin-right: -1px
+	+border-radius(4px 0 0 4px)
+
+.vertical-tabs .nav-tabs .active > a,
+.vertical-tabs .nav-tabs .active > a:hover
+	border-color: #ddd transparent #ddd #ddd
+	*border-right-color: white
+
+
+// User Page
+// ----------------------------------------------------------------------------
+.page-user
+	.tabs
+		display: none
+
+// Isotope
+// ----------------------------------------------------------------------------
+
+.isotope-item 
+	z-index: 2
+
+.isotope-hidden.isotope-item 
+	pointer-events: none
+	z-index: 1
+
+.isotope,
+.isotope .isotope-item
+	-webkit-transition-duration: 0.8s
+	-moz-transition-duration: 0.8s
+	-ms-transition-duration: 0.8s
+	-o-transition-duration: 0.8s
+	transition-duration: 0.8s
+
+.isotope
+	-webkit-transition-property: height, width
+	-moz-transition-property: height, width
+	-ms-transition-property: height, width
+	-o-transition-property: height, width
+	transition-property: height, width
+
+.isotope .isotope-item
+	-webkit-transition-property: -webkit-transform, opacity
+	-moz-transition-property: -moz-transform, opacity
+	-ms-transition-property: -ms-transform, opacity
+	-o-transition-property: top, left, opacity
+	transition-property: transform, opacity
+
+.isotope.no-transition,
+.isotope.no-transition .isotope-item,
+.isotope .isotope-item.no-transition 
+	-webkit-transition-duration: 0s
+	-moz-transition-duration: 0s
+	-ms-transition-duration: 0s
+	-o-transition-duration: 0s
+	transition-duration: 0s
+
+.isotope.infinite-scrolling 
+	-webkit-transition: none
+	-moz-transition: none
+	-ms-transition: none
+	-o-transition: none
+	transition: none
+
+
+

@@ -1,0 +1,4 @@
+name = Frank's dev Space
+description = Frank's dev space
+core = 7.x
+package = Cirro

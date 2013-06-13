@@ -1,0 +1,33 @@
+<?php
+/**
+ * Install shiz for clients tools.
+ */
+
+/**
+ * Set mail system for this module.
+ */
+function imgbrew_clients_install() {
+
+	// Get current default
+	$default = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
+
+	// Merge with module specific entry
+	variable_set('mail_system', $default + array('imgbrew_clients' => 'ClientsMailSystem'));
+
+}
+
+/**
+ * Unset module specific mail system setting.
+ */
+function imgbrew_clients_uninstall() {
+
+	// Get current default
+	$default = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
+
+	// Unset module setting
+	unset($default['imgbrew_clients']);
+
+	// Set back default array
+	variable_set('mail_system', $default);
+
+}

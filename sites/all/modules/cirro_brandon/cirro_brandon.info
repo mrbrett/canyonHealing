@@ -1,0 +1,4 @@
+name = Brandon dev Space
+description = Brandon's dev space
+core = 7.x
+package = Cirro

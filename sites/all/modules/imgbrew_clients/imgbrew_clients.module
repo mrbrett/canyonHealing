@@ -1,0 +1,474 @@
+<?php
+
+/**
+ * @file
+ *   Client portal pieces.
+ */
+ 
+/**
+ * Extend default mail class so we can stop format from killing html.
+ */
+class ClientsMailSystem extends DefaultMailSystem {
+
+	/**
+	 * Concatenate and wrap the emaail body for plain text emails.
+	 *
+	 * @param $message
+	 *   A message array as described in hook_mail_alter().
+	 *
+	 * @return
+	 *  The formatted $message.
+	 */
+	public function format(array $message) {
+		$message['body'] = implode("\n\n", $message['body']);
+		$message['body'] = drupal_wrap_mail($message['body']);
+		return $message;
+	}
+
+}
+
+/**
+ * Implements hook_menu().
+ */
+function imgbrew_clients_menu() {
+
+	// Init
+	$items = array();
+
+	// Get clients
+	$query_string = '
+		SELECT id, title, short_name
+			FROM imgbrew_client
+	';
+
+	$query = db_query($query_string);
+
+	$clients = $query->fetchAll();
+
+	// Loop through IDs
+	foreach ( $clients as $client ) {
+
+		// Create hook_menu for client page
+		$items["client/{$client->short_name}"] = array(
+			'title' => $client->title,
+			'access callback' => 'imgbrew_clients_access_callback',
+			'access arguments' => array("view client $client->short_name"),
+			'page callback' => 'imgbrew_clients_page',
+			'page arguments' => array(1),
+			'file' => 'imgbrew_clients_page.inc',
+		);
+
+	}
+
+	return $items;
+
+}
+
+/**
+ * Custom access callback to allow for staff members.
+ */
+function imgbrew_clients_access_callback($string) {
+
+	// Init
+	global $user;
+
+	// Check for admin
+	if ($user->uid == 1 ) {
+
+		return TRUE;
+
+	}
+
+	// Check for staff
+	if ( in_array('staff', $user->roles) ) {
+
+		return TRUE;
+
+	}
+
+	// Check user access
+	return user_access($string);
+
+}
+
+/**
+ * Implements hook_permission().
+ */
+function imgbrew_clients_permission() {
+
+	// Init
+	$items = array();
+
+	// Get clients
+	$query_string = '
+		SELECT id, title, short_name
+			FROM imgbrew_client
+	';
+
+	$query = db_query($query_string);
+
+	$clients = $query->fetchAll();
+
+	// Loop through client IDS
+	foreach( $clients as $client ) {
+
+		// Add permission to view client shiz
+		$items["view client {$client->short_name}"] = array(
+			'title' => "View Client {$client->title}",
+			'description' => "View client {$client->short_name} posts",
+		);
+
+	}
+
+	return $items;
+
+}
+
+/**
+ * Notification CJAX
+ * Send notification email.
+ */
+function imgbrew_clients_notify_cjax($post) {
+
+	// Init
+	$id = $post['client'];
+	$client = cirro_core_single_load($id, 'client');
+	$link = l('here', "http://www.imagebrew.com/user");
+	$time = '';
+
+	// Body of email
+	$body = array(
+		'<p>Hi there!</p>',
+		'<p>A new draft has been posted to your Image Brew client page.</p>',
+		"<p>Click $link to login.</p>",
+		'<p>Please call or email us with any questions or issues.</p>',
+		"<p><a href=\"mailto:info@imagebrew.com\">info@imagebrew.com</a><br></br>",
+		'303.593.1226</p>',
+	);
+
+
+	// Load mail system object
+	$system = drupal_mail_system('imgbrew_clients', '');
+
+	// Build message
+	$message = array(
+		'id' => 'imgbrew_clients_notify',
+		'to' => $post['mail'],
+		'subject' => 'New Draft Posted by Image Brew',
+		'body' => $body,
+		'headers' => array(
+			'From' => 'info@imagebrew.com',
+			'Content-Type' => 'text/html',
+		),
+	);
+
+	// Format message
+	$message = $system->format($message);
+
+	// Attempt to email
+	if ( $system->mail($message) ) {
+
+		// Set status
+		$status = 'pass';
+
+		// Update client notified in DB
+		$time = time();
+		$client->notified = $time;
+		entity_get_controller('client')->update($client);
+
+		// Format time for return
+		$time = format_date($time);
+
+		watchdog('imgbrew_clients', "Email sent to {$post['mail']}");
+
+	} else {
+
+		// Set status message
+		$status = 'error';
+
+		watchdog('imgbrew_clients', "Email error sending to {$post['mail']}");
+
+	}
+
+	return array(
+		'status' => $status,
+		'notified' => $time,
+	);
+
+}
+
+/**
+ * Implements hook_form_alter().
+ * Add extra submit to client add form.
+ */
+function imgbrew_clients_form_cirro_core_entity_edit_form_alter(&$form, &$form_state, $form_id) {
+
+	// Load id field
+	$id_field = $form['id_field']['#value'];
+
+	// Restrict to client form
+	if ( $form['type']['#value'] === 'client' ) {
+
+		// Add name validator
+		$form['#validate'][] = 'imgbrew_clients_name_validate';
+
+		// Add extra submit function for create client specific role
+		$form['#submit'][] = 'imgbrew_clients_create_actions';
+
+		// Check for add action
+		if ( $form['action']['#value'] === 'add' ) {
+
+			// Build email field
+			$email = array(
+				'email' => array(
+					'#type' => 'textfield',
+					'#title' => 'Email',
+					'#description' => 'Address where post notifications will be sent',
+					'#required' => TRUE,
+				),
+			);
+
+			// Insert after title
+			
+			$form = 
+				array_slice($form, 0, 5, TRUE) +
+				$email +
+				array_slice($form, 5, count($form) - 1, TRUE)
+			;
+
+		} else {
+
+			// Load stuff
+			$short_name = $form['short_name']['#default_value'];
+			$url = "http://www.imagebrew.com/client/$short_name";
+			$link = l($url, "client/$short_name");
+			$markup = "<em>Client Page URL:</em> $link";
+			$client_url = array('url' => array('#markup' => $markup));
+
+			// Edit stuff only
+			$form = $client_url + $form;
+
+		}
+
+	}
+
+}
+
+/**
+ * Validate that client names only have letters and numbers.
+ */
+function imgbrew_clients_name_validate($form, &$form_state) {
+
+	// Check name value
+	if ( !preg_match("/^[\w ]+$/", $form_state['values']['title']) ) {
+
+		// Set Error
+		form_set_error('title', 'Client names may only include letters and numbers!');
+
+	}
+
+}
+
+/**
+ * Do any extra actions needed when creating a new client.
+ */
+function imgbrew_clients_create_actions($form, &$form_state) {
+
+		// Init
+		$values_obj = (object) $form_state['values'];
+		$cid = $values_obj->id;
+
+		// Format name
+		$short_name = strtolower( str_replace(' ', '', $values_obj->title) );
+
+		// Load shortname into values
+		$values_obj->short_name = $short_name;
+
+		// Update client
+		entity_get_controller('client')->update($values_obj);
+
+		// Clear menu and perm caches
+		drupal_flush_all_caches();
+
+	// Only act on client creation
+	if ( $form_state['values']['action'] === 'add' ) {
+
+		// Check for existing role with short_name
+		if ( ( $role = user_role_load_by_name($short_name) ) === FALSE ) {
+
+			// Build role for client
+			$role = new stdClass;
+
+			// Set name
+			$role->name = $short_name;
+
+			// Create role
+			user_role_save($role);
+
+			// Load role
+			$role = user_role_load_by_name($short_name);
+
+		}
+
+		// Load rid
+		$rid = $role->rid;
+
+		// Load role id into values
+		$values_obj->rid = $rid;
+
+		// Grant permission
+		user_role_grant_permissions($rid, array("view client $short_name"));
+
+		// Build user
+		$user = new stdClass;
+		$user->name = $short_name;
+		$edit = array(
+			'pass' => $short_name,
+			'roles' => array($rid => $short_name),
+			'status' => 1,
+			'mail' => $values_obj->email,
+		);
+
+		// Save user
+		$user = user_save($user, $edit);
+
+		// Get user id
+		$cuid = $user->uid;
+
+		// Load cuid into values
+		$values_obj->cuid = $cuid;
+
+		// Update client
+		entity_get_controller('client')->update($values_obj);
+
+	}// /action = add
+	else {
+
+		// Update user name
+		$user = user_load($values_obj->cuid);
+
+		if ( $user->name !== $short_name ) {
+
+			// Cache old name
+			$old_name = $user->name;
+
+			// Load new username
+			$edit = array(
+				'name' => $short_name,
+				'pass' => $short_name,
+			);
+
+			// Update user
+			user_save($user, $edit);
+
+			// Load role
+			$role = user_role_load($values_obj->rid);
+
+			// Load new name and pass
+			$role->name = $short_name;
+
+			// Update role
+			user_role_save($role);
+
+			// Change Permissions
+			$permissions = array(
+				"view client $old_name" => 0,
+				"view client $short_name" => 1,
+			);
+			user_role_change_permissions($role->rid, $permissions);
+
+
+		}
+
+	}
+
+}
+
+/**
+ * Implements hook_form_alter().
+ * Add extra submit to client delete form.
+ */
+function imgbrew_clients_form_cirro_core_entity_delete_form_alter(&$form, &$form_state, $form_id) {
+
+	// Restrict to client type
+	if ( $form['type']['#value'] === 'client' ) {
+
+		// Add submit before core submit
+		array_unshift($form['#submit'], 'imgbrew_clients_delete_actions');
+
+	}
+
+}
+
+/**
+ * Do and extra actions needed when deleting a client.
+ */
+function imgbrew_clients_delete_actions($form, &$form_state) {
+
+	// Init
+	$cid = $form['id']['#value'];
+
+	// Load client
+	$client = cirro_core_single_load($cid, 'client');
+
+	// Delete role
+	$rid = $client->rid;
+	db_delete('role')
+    ->condition('rid', $rid)
+    ->execute();
+  db_delete('role_permission')
+    ->condition('rid', $rid)
+    ->execute();
+  // Update the users who have this role set:
+  db_delete('users_roles')
+    ->condition('rid', $rid)
+    ->execute();
+
+	// Delete user
+	user_delete($client->cuid);
+
+	// Clear caches
+	drupal_flush_all_caches();
+
+}
+
+/**
+ * Implements hook_user_login().
+ * Redirect Client users to the appropriate page.
+ */
+function imgbrew_clients_user_login() {
+
+	// Load user
+	global $user;
+
+	// Set redirect
+	$redirect = "client/{$user->name}";
+
+	// Check for admin and staff role
+	if (
+	  (
+	  	empty($_GET['destination']) ||
+	  	$_GET['destination'] == 'admin/dash'
+	  ) &&
+  	$user->uid !== 0 &&
+  	!in_array('staff', $user->roles)&&
+  	(
+  		!isset($_POST['form_id']) ||
+  		$_POST['form_id'] != 'user_pass_reset'
+  	)
+	) {
+
+		$_GET['destination'] = $redirect;
+
+	}
+
+}
+
+
+
+
+
+
+
+
+

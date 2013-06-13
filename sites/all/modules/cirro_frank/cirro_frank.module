@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ *   Frank's dev space
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function cirro_frank_menu() {
+	
+	// Init
+	$items = array();
+	
+	$items['admin/frank'] = array(
+		'title' => 'Come at me bro',
+		'page callback' => 'cirro_frank_test_page',
+		'access arguments' => array('claro super'),
+		'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+/**
+ * Build Frank's dope admin page
+ */
+function cirro_frank_test_page() {
+
+	// Init
+	$html = 'HELLO FRUNK';
+	
+
+
+
+
+
+
+	return $html;
+
+}

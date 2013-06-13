@@ -1,0 +1,148 @@
+<?php
+
+/**
+ * @file
+ * The define project entities.
+ */
+
+/**
+ * Implements hook_entity_info().
+ *
+ * @return
+ *   Array of entity info arrays.
+ */
+function imgbrew_items_entity_info() {
+		
+	// Init
+	$entities = array();
+
+	// Home Page
+	$entities['video'] = array(
+		'label' => t('Video'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_video',
+		'dashboard' => array(
+			'add',
+			'table',
+			'weight',
+		),
+	);
+
+	// About Page
+	$entities['about_page'] = array(
+		'label' => t('About Page'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_about_page',
+		'dashboard' => array('primary'),
+	);
+
+	// About Page Team info
+	$entities['team_member'] = array(
+		'label' => t('Team Member'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_team_member',
+		'dashboard' => array(
+			'add',
+			'weight',
+			'table',
+		 ),
+	);
+
+	//About Page Brands 
+	$entities['brand'] = array(
+		'label' => t('Brand'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_brand',
+		'dashboard' => array(
+			'add',
+			'weight',
+			'table',
+		 ),
+	);
+
+	// Contact Page
+	$entities['contact_page'] = array(
+		'label' => t('Contact Page'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_contact_page',
+		'dashboard' => array('primary'),
+	);
+	
+	// Rentals Page
+	$entities['rentals'] = array(
+		'label' => t('Rentals'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_rentals',
+		'dashboard' => array('primary'),
+	);
+
+	// Client
+	$entities['client'] = array(
+		'label' => t('Client'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_client',
+		'dashboard' => array(
+			'add',
+			'table',
+		),
+		'children' => array(
+			'client_post' => 'Client Post',
+		),
+	);
+
+	// Client Post
+	$entities['client_post'] = array(
+		'label' => t('Client Post'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'imgbrew_client_post',
+	);
+	
+	/**
+	 * Default entity options.
+	 *
+	 * This array will be added to each entity array.
+	 */
+	$defaults = array(
+		'fieldable' => FALSE,
+		'entity keys' => array(
+			'id' => 'id',
+		),
+		'static cache' => TRUE,
+	);
+	
+	// Loop through entities
+	foreach ( $entities as $index => $entity ) {
+		
+		// Merge defaults array
+		$entities[$index] = array_merge($defaults, $entity);
+		
+	}
+	
+	return $entities;
+
+}
+
+function imgbrew_items_build_iframe_cjax($options){
+	$return = array();
+	$vid = $options['vidID'];
+	$vidW = $options['vidW'];
+	$vidH = $options['vidH'];
+	$vidTitle = $options['vidTitle'];
+	$vidDescription = $options['vidDescription'];
+
+	$return['status'] = 'pass';
+	$return['vid'] = $vid;
+
+	// Adding video 
+	$return['iframe'] = "<iframe id=\"player\" src=\"http://player.vimeo.com/video/$vid?api=1&title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff\" 
+		width= $vidW 
+		height= $vidH
+		frameborder=\"0\" 
+		webkitAllowFullScreen mozallowfullscreen allowFullScreen>
+	</iframe>";
+
+
+
+
+	return $return;
+}
