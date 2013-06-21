@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * The module for the PROJECT PAGE page callback and related content.
+ */
+
+/**
+ *	Implements hook_menu()
+ */
+function PROJECT_PAGE_menu(){
+
+	$items = array();
+
+	// Contact Page
+	$items['PAGE'] = array(
+		'title' => t('PAGE'),
+		'page callback' => 'PROJECT_PAGE_page_build',
+		'file' => 'PROJECT_PAGE_page_build.inc',
+		'access arguments' => array('access content'),
+		'type' => MENU_CALLBACK,
+	);
+
+	return $items;
+
+}

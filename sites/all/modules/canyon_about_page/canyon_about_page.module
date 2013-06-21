@@ -8,15 +8,15 @@
 /**
  *	Implements hook_menu()
  */
-function imgbrew_about_page_menu() {
+function canyon_about_page_menu() {
 
 	$items = array();
 
 	// About Page`
 	$items['about'] = array(
 		'title' => 'Aboutpage',
-		'page callback' => 'imgbrew_about_page',
-		'file' => 'imgbrew_about_page.inc',
+		'page callback' => 'canyon_about_page',
+		'file' => 'canyon_about_page.inc',
 		'access arguments' => array('access content'),
 		'type' => MENU_CALLBACK,
 	);

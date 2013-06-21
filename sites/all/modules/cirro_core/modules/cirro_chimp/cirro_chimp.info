@@ -1,0 +1,8 @@
+name = Cirro Mail Chimp API
+description = Simple Signup API built w/ cjax
+package = Cirro
+core = 7.x
+
+configure = admin/config/system/cirro-chimp
+
+files[] = MCAPI.class.php

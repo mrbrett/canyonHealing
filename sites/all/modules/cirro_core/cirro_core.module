@@ -1,0 +1,479 @@
+<?php
+
+/**
+ * @file
+ *   Create CRUD GUI stuff for entities setup through the core module.
+ */
+
+/**
+ *
+ * Add defaults to cirro_core schemas.
+ */
+function cirro_core_schema_defaults(&$schema) {
+
+	// Init
+	$defaults = array(
+
+		'id' => array(
+			'type' => 'serial',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'form' => array(
+				'#type' => 'hidden',
+			),
+		),
+	
+		'created' => array(
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 0
+		),
+	
+		'changed' => array(
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 0,
+		),
+	
+		'uid' => array(
+			'type' => 'int',
+			'unsigned' => TRUE,
+		),
+		
+		'type' => array(
+			'type' => 'varchar',
+			'length' => 255,
+			'not null' => TRUE,
+			'default' => '',
+		),
+		
+		'type_label' => array(
+			'type' => 'varchar',
+			'length' => 255,
+			'not null' => TRUE,
+			'default' => '',
+		),
+
+	);
+
+	// Loop through tables
+	foreach ( $schema as $tableName => $table ) {
+
+		if ( isset( $table['fields']) ) {
+			$schema[$tableName]['fields'] = array_merge($defaults, $table['fields']);
+		}
+
+		if ( !isset($table['primary key']) ) {
+			$schema[$tableName]['primary key'] = array('id');
+		}
+	}
+}
+
+/**
+ * Implements hook_permission().
+ *
+ * Programmatically build permissions for all cirro entities.
+ */
+function cirro_core_permission() {
+	
+	// Init
+	$entities = array();
+	$perms = array();
+	$entity_info = entity_get_info();
+	
+	// Loop through to build permissions
+	foreach ( $entity_info as $mach_name => $info ) {
+		
+		// Check for cirroCoreController
+		if ( $info['controller class'] === 'cirroCoreController' ) {
+			
+			// Add to entities array
+			$entities[$mach_name] = $info['label'];
+
+		}
+
+	}
+	
+	// Loop through entities to build perms
+	foreach ( $entities as $mach_name => $label ) {
+		
+		// Create
+		$perms["add $mach_name"] = array(
+			'title' => "Create $label",
+			'description' => "Allow to create new $label",
+		);
+		
+		// Update
+		$perms["edit $mach_name"] = array(
+			'title' => "Update $label",
+			'description' => "Allow to update existing $label",
+		);
+		
+		// Delete
+		$perms["delete $mach_name"] = array(
+			'title' => "Delete $label",
+			'description' => "Allow to delete $label",
+		); 
+		
+	}
+	
+	return $perms;
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cirro_core_theme() {
+	
+	return array(
+		
+		'cirro_core_weight_form' => array(
+			'render element' => 'form',
+		),
+		
+		'cirro_core_children_weight_form' => array(
+			'render element' => 'form',
+		),
+		
+		'cirro_core_multi_img_weight_form' => array(
+			'render element' => 'form',
+		),
+		
+		'cirro_core_multi_file_weight_form' => array(
+			'render element' => 'form',
+		),
+		
+	);
+
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function cirro_core_entity_info() {
+ 
+  // Init
+ 	$entities = array ();
+
+  //  Create multi_image
+	$entities['multi_img'] = array(
+		'label' => t('Multiple Image'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'cirro_multi_img',
+		'fieldable' => FALSE,
+		'entity keys' => array(
+			'id' => 'id',
+		),
+		'static cache' => TRUE,
+	);
+
+	// Create multi_file
+	$entities['multi_file'] = array(
+		'label' => t('Multiple File'),
+		'controller class' => 'cirroCoreController',
+		'base table' => 'cirro_multi_file',
+		'fieldable' => FALSE,
+		'entity keys' => array(
+			'id' => 'id',
+		),
+		'static cache' => TRUE,
+	);
+	
+	return $entities;
+
+}
+
+/**
+ * Implements hook_menu().
+ *
+ * Programmatically create page registrations for CRUD GUI.
+ */
+function cirro_core_menu() {
+	
+	// Init
+	$items = array();
+	$entities = array();
+	$entity_info = entity_get_info();
+	
+	// Loop through to build permissions
+	foreach ( $entity_info as $mach_name => $info ) {
+		
+		// Check for cirroCoreController
+		if ( $info['controller class'] === 'cirroCoreController' ) {
+			
+			// Add to entities array
+			$entities[$mach_name] = $info;
+
+		}
+
+	}
+
+	// Loop through entities
+	foreach ( $entities as $mach_name => $info ) {
+
+		// Init
+		$label = $info['label'];
+
+		/**
+		 * Entity Add page
+		 * Args by segment number
+		 *  - 2: type
+		 *  - 3: loaded item(action)
+		 */
+		$items["admin/dash/$mach_name/add"] = array(
+			'title' => "Create $label",
+			'page callback' => 'cirro_core_entity_edit_page',
+			'page arguments' => array( 2, 3),
+			'access callback' => 'cirro_core_access_callback',
+			'access arguments' => array(2, 3),
+			'file' => 'cirro_core_forms.inc',
+		);
+
+		// Entity edit
+		$items["admin/dash/$mach_name/%cirro_core_single/edit"] = array(
+			'title' => "Edit $label",
+			'title callback' => FALSE,
+			'load arguments' => array(2),
+			'page callback' => 'cirro_core_entity_edit_page',
+			'page arguments' => array(2, 3, 4),
+			'access callback' => 'cirro_core_access_callback',
+			'access arguments' => array(2, 4),
+			'file' => 'cirro_core_forms.inc',
+		);
+		
+		// Entity delete
+		$items["admin/dash/$mach_name/%cirro_core_single/delete"] = array(
+			'title' => "Delete $label",
+			'load arguments' => array(2),
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('cirro_core_entity_delete_form', 2, 3, 4),
+			'access callback' => 'cirro_core_access_callback',
+			'access arguments' => array(2, 4),
+			'file' => 'cirro_core_forms.inc',
+		);
+		
+		// Check for weight option
+		if ( isset($info['dashboard']) && in_array('weight', $info['dashboard']) ) {
+			
+			// Weight form
+			$items["admin/dash/weights/$mach_name"] = array(
+				'title' => "Reorder $label",
+				'page callback' => 'drupal_get_form',
+				'page arguments' => array('cirro_core_weight_form', 3),
+				'access callback' => 'cirro_core_access_callback',
+				'access arguments' => array(3, 'edit'),
+				'file' => 'cirro_core_forms.inc',
+			);
+			
+		}
+
+	}
+	
+	return $items;
+
+}
+
+/**
+ * Load single entity item.
+ *
+ * @param $id
+ *   ID of item to load
+ *
+ * @param $type
+ *   Entity type of item to load.
+ *
+ * @return
+ *   Item object
+ */
+function cirro_core_single_load($id, $type) {
+	
+	// Load array from entity_load
+	$array = entity_load($type, array($id));
+	
+	// Return first item
+	return reset($array);
+
+}
+
+/**
+ * Access callback
+ *
+ * @param $type
+ *   Entity type
+ *
+ * @param $action
+ *   Action to be performed
+ */
+function cirro_core_access_callback($type, $action) {
+	
+	// Build permission string
+	$perm = "$action $type";
+	
+	return user_access($perm);
+
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function cirro_core_form_alter(&$form, &$form_state, $form_id) {
+
+	// Hide admin from user_admin table
+	if ( $form_id === 'user_admin_account' ) {
+
+		// Remove admin account
+		unset($form['accounts']['#options'][1]);
+
+	}
+
+	// Hide admin role options from user create form
+	if ( $form_id === 'user_register_form' ) {
+
+		// Remove admin option
+		unset($form['account']['roles']['#options'][3]);
+
+	}
+
+}
+
+/**
+ * Implements hook_forms().
+ *
+ * Maps multiple form_ids to single form validate/submit shiz.
+ *
+ */
+function cirro_core_forms($form_id, $args) {
+	
+	// Init
+	$forms = array();
+	
+	// Load all entity info
+	$entities = entity_get_info();
+	
+	// Loop through entities
+	foreach ( $entities as $mach_name => $info ) {
+		
+		// Check info for children
+		if ( isset($info['children']) ) {
+			
+			// Loop through children
+			foreach ( $info['children'] as $child_type => $child_label ) {
+				
+				// Create weight form id mapping
+				$forms["cirro_core_{$child_type}_children_weights"] = array(
+					
+					'callback' => 'cirro_core_children_weight_form',
+
+				);
+				
+				// Create create form id mapping
+				$forms["cirro_core_{$child_type}_child_create"] = array(
+					
+					'callback' => 'cirro_core_child_create_form',
+				
+				);
+				
+			}
+			
+		}
+				
+		// Check info for multi img
+		if ( isset($info['multi_img']) ) {
+
+			// Loop through multi img fields
+			foreach ( $info['multi_img'] as $field_name => $field_data ) {
+				
+				// Add multi_img weights form id
+				$forms["cirro_core_{$mach_name}_{$field_name}_multi_img_weights"] = array(
+
+					'callback' => 'cirro_core_multi_img_weight_form',
+
+				);
+				
+				// Add multi_img upload form id
+				$forms["cirro_core_{$mach_name}_{$field_name}_multi_img_upload"] = array(
+
+					'callback' => 'cirro_core_multi_img_upload_form',
+
+				);
+
+			}
+			
+		}
+		
+		// Check info for multi file
+		if ( isset($info['multi_file']) ) {
+			
+			// Loop through multi file fields
+			foreach ( $info['multi_file'] as $field_name => $field_data ) {
+				
+				// Add multi_file weights
+				$forms["cirro_core_{$mach_name}_{$field_name}_multi_file_weights"] = array(
+				
+					'callback' => 'cirro_core_multi_file_weight_form',
+					
+				);
+				
+				// Add multi_file upload form
+				$forms["cirro_core_{$mach_name}_{$field_name}_multi_file_upload"] = array(
+				
+					'callback' => 'cirro_core_multi_file_upload_form',
+				
+				);
+				
+			}
+			
+		}
+
+	}
+
+	return $forms;
+
+}
+
+/**
+ * Formate bytes values for printing.
+ *
+ * @param $bytes
+ *   Raw number of bytes
+ * @param $precision
+ *   Number of decimal places to format to
+ */
+function cirro_core_file_format_bytes($bytes, $precision = 2) { 
+
+		// Init
+    $units = array('b', 'k', 'mb', 'g', 't'); 
+
+    $bytes = max($bytes, 0); 
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+    $pow = min($pow, count($units) - 1); 
+
+    // Uncomment one of the following alternatives
+     $bytes /= pow(1024, $pow);
+    // $bytes /= (1 << (10 * $pow)); 
+
+    return round($bytes, $precision) . $units[$pow]; 
+}
+
+/** 
+ * Include multi_img tools
+ */
+module_load_include('inc', 'cirro_core', 'cirro_core_multi_img');
+
+/**
+ * Include multi_file tools
+ */
+module_load_include('inc', 'cirro_core', 'cirro_core_multi_file');
+
+/**
+ * Include children tools
+ */
+module_load_include('inc', 'cirro_core', 'cirro_core_children');
+
+/**
+ * Include top level weight tools
+ */
+module_load_include('inc', 'cirro_core', 'cirro_core_weights');

@@ -1,0 +1,6 @@
+name = PROJECT PAGE
+description = The page callback and related content for the PROJECT PAGE page
+core = 7.x
+package = Cirro
+
+dependencies[] = cirro_core

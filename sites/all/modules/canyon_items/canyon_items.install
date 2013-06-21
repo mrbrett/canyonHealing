@@ -8,7 +8,7 @@
 /**
  * Implements hook_schema().
  */
-function imgbrew_items_schema() {
+function canyon_items_schema() {
 	
 	// Init
 	$schema = array();

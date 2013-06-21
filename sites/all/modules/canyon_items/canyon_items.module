@@ -11,7 +11,7 @@
  * @return
  *   Array of entity info arrays.
  */
-function imgbrew_items_entity_info() {
+function canyon_items_entity_info() {
 		
 	// Init
 	$entities = array();

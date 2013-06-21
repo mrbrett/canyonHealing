@@ -1,0 +1,4 @@
+name = Cirro Dashboard
+description = Custom Admin Dashbaord
+package = Cirro
+core = 7.x

@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @file
+ *   Basic Mail Chimp API implimentation ready to be used with cjax.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function cirro_chimp_menu() {
+
+	// Init
+	$items = array();
+
+	// Simple config page for storing API Key.
+	$items['admin/config/system/cirro-chimp'] = array(
+		'title' => 'Cirro Chimp',
+		'description' => 'Basic config settings including API Key',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('cirro_chimp_config_form'),
+		'access arguments' => array('administer site configuration'),
+		'file' => 'cirro_chimp_admin.inc',
+	);
+
+	return $items;
+
+}
+
+/**
+ * CJAX call for adding new subsriber to mailchimp list.
+ * 
+ * @param $post
+ *   Data array passed by cirro_ajax
+ *   Must have listID and email
+ */
+function cirro_chimp_subscribe_cjax($post) {
+
+	// Init
+	$api_key = variable_get('cirro_chimp_api_key', '');
+	$list_id = $post['listID'];
+	$email = $post['email'];
+	$merge_vars = isset($post['merge_vars']) ? $post['merge_vars'] : array();
+
+	// Load API
+	$api = new MCAPI($api_key);
+
+	// Subscribe
+	$subscribe = $api->listSubscribe($list_id, $email, $merge_vars);
+
+	// Test subscribe
+	if ( $subscribe ) {
+
+		// Successful subscribe
+		// Set status pass
+		$return = array('status' => 'pass');
+
+	} else {
+
+		// Some sort of error
+		// Set status fail
+		$return = array(
+			'status' => 'pass',
+			'mcapi' => $api,
+		);
+
+	}
+
+
+	return $return;
+
+}

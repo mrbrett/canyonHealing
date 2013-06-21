@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Schema info, updates and any other install/uninstall tasks.
+ */
+
+/**
+ * Implements hook_instal().
+ * Add dash access to staff role.
+ */
+function cirro_dash_install() {
+		// Load role
+	$role = user_role_load_by_name('staff');
+
+	// Check for role
+	if ( !empty($role) ) {
+
+		// Load role ID
+		$rid = $role->rid;
+
+		// Permissions to grant
+		$permissions = array(
+			'access dashboard',
+		);
+
+		// Grant permissions
+		user_role_grant_permissions($rid, $permissions);
+
+	}
+}

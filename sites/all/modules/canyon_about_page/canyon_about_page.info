@@ -1,0 +1,6 @@
+name = Canyon Aboutpage
+description = The page callback and related content for the Canyon About page
+core = 7.x
+package = Cirro
+
+dependencies[] = cirro_core

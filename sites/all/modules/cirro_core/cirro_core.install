@@ -1,0 +1,360 @@
+<?php
+
+/**
+ * @file
+ * Schema info, updates and any other install/uninstall tasks.
+ */
+
+/**
+ * Implements hook_instal().
+ * Create staff role.
+ */
+function cirro_core_install() {
+
+	// Init
+	$role = new stdClass;
+
+	// Add name
+	$role->name = 'staff';
+
+	// Create role
+	user_role_save($role);
+
+	// Load role
+	$role = user_role_load_by_name('staff');
+
+	// Check for role
+	if ( !empty($role) ) {
+
+		// Load role ID
+		$rid = $role->rid;
+
+		// Permissions to grant
+		$permissions = array(
+			'add multi_img',
+			'edit multi_img',
+			'delete multi_img',
+			'add multi_file',
+			'edit multi_file',
+			'delete multi_file',
+			'access administration pages',
+			'access site in maintenance mode',
+			'view the administration theme',
+			'administer users',
+			'administer permissions',
+			'change own username',
+		);
+
+		// Grant permissions
+		user_role_grant_permissions($rid, $permissions);
+
+	}
+
+}
+
+/**
+ * Implements hook_uninstall().
+ * Remove staff role.
+ */
+function cirro_core_uninstall() {
+
+	// Load role
+	$role = user_role_load_by_name('staff');
+
+	// Load role ID
+	$rid = $role->rid;
+
+	// Delete stuff
+	db_delete('role')
+    ->condition('rid', $rid)
+    ->execute();
+  db_delete('role_permission')
+    ->condition('rid', $rid)
+    ->execute();
+  // Update the users who have this role set:
+  db_delete('users_roles')
+    ->condition('rid', $rid)
+    ->execute();
+
+}
+
+/**
+ * Implements hook_schema().
+ */
+function cirro_core_schema() {
+	
+	// Init
+	$schema = array();
+
+
+	$schema['cirro_multi_img'] = array(
+		'description' => 'Base table for core multi_img',
+		'fields' => array(
+			
+			'id' => array(
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			),
+			
+			'created' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0
+			),
+
+			'changed' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			),
+
+			'uid' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+			),
+				
+			'type' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+			
+			'type_label' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'weight' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'default' => 0,
+			),
+
+			'fid' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'unsigned' => TRUE,
+				'default' => 0,
+				'form' => array(
+					'#type' => 'managed_file',
+				),
+			),
+
+			'parent_id' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+			),
+
+			'parent_type' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+			
+			'parent_field' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'img_title' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'img_alt' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => 255,
+				'default' => '',
+			),
+
+			'data_fields' => array(
+				'type' => 'blob',
+				'size' => 'normal',
+				'serialize' => TRUE,
+			),
+
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+	$schema['cirro_multi_file'] = array(
+		'description' => 'Base table for core multi_file',
+		'fields' => array(
+			
+			'id' => array(
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			),
+			
+			'created' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0
+			),
+
+			'changed' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			),
+
+			'uid' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+			),
+				
+			'type' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+			
+			'type_label' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'title' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'weight' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'default' => 0,
+			),
+
+			'fid' => array(
+				'type' => 'int',
+				'not null' => TRUE,
+				'unsigned' => TRUE,
+				'default' => 0,
+				'form' => array(
+					'#type' => 'managed_file',
+				),
+			),
+
+			'parent_id' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+			),
+
+			'parent_type' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+			
+			'parent_field' => array(
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+			),
+
+			'data_fields' => array(
+				'type' => 'blob',
+				'size' => 'normal',
+				'serialize' => TRUE,
+			),
+
+		),
+
+		'primary key' => array('id'),
+
+	);
+
+	return $schema;
+
+}
+
+/**
+ * Add data fields storage to both img and file.
+ */
+function cirro_core_update_7001() {
+
+	// Data fields spec
+	$spec = array(
+		'type' => 'blob',
+		'size' => 'normal',
+		'serialize' => TRUE,
+	);
+
+	db_add_field('cirro_multi_file', 'data_fields', $spec);
+	db_add_field('cirro_multi_img', 'data_fields', $spec);
+
+}
+
+/**
+ * Check for staff role and create if needed and then grant permissions.
+ */
+function cirro_core_update_7002() {
+
+	// Try to load role
+	$role = user_role_load_by_name('staff');
+
+	// Check for staff role
+	if ( empty($role) ) {
+
+		// Init
+		$role = new stdClass;
+
+		// Add name
+		$role->name = 'staff';
+
+		// Create role
+		user_role_save($role);
+
+		// Load role
+		$role = user_role_load_by_name('staff');
+
+	}
+
+	// Load role ID
+	$rid = $role->rid;
+
+	// Permissions to grant
+	$permissions = array(
+		'add multi_img',
+		'edit multi_img',
+		'delete multi_img',
+		'add multi_file',
+		'edit multi_file',
+		'delete multi_file',
+		'access dashboard',
+		'access administration pages',
+		'access site in maintenance mode',
+		'view the administration theme',
+		'administer users',
+		'administer permissions',
+		'change own username',
+	);
+
+	// Grant permissions
+	user_role_grant_permissions($rid, $permissions);
+
+}

@@ -1,0 +1,4 @@
+name = Cirro JS
+description = The Cirro JS Framework
+core = 7.x
+package = Cirro

@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * The Cirro JS framework, which controls the global js capabilities of the site
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function cirro_js_menu() {
+
+	// The Cirro AJAX framework
+	$items['cirro/ajax'] = array(
+		'page callback' => 'cirro_ajax_framework',
+		'access arguments' => array('access content'),
+		'file' => 'cirro_ajax_framework.inc',
+	);
+
+	return $items;
+
+}
+
+/**
+ * Implements hook_init()
+ */
+function cirro_js_init() {
+
+	// Init
+	global $theme;
+	$module_path = drupal_get_path('module', 'cirro_js');
+	$js_path = '';
+	$css_path = '';
+
+	// JS added to all pages
+	$js_path = "$module_path/js/Cirro.js";
+	drupal_add_js($js_path, array('weight' => 20));
+
+	// If the theme is climAdmin
+	if ( $theme === 'climAdmin' ) {
+
+		// JS added to climAdmin pages only
+		$js_path = "$module_path/js/redactor.min.js";
+		drupal_add_js($js_path, array('weight' => 30));
+		$js_path = "$module_path/js/climAdmin.js";
+		drupal_add_js($js_path, array('scope' => 'footer', 'weight' => 0));
+
+		// CSS added to climAdmin pages only
+		$css_path = "$module_path/css/redactor.css";
+		drupal_add_css($css_path);
+
+	}
+
+}
+
+/**
+ * Implements hook_js_alter
+ */
+function cirro_js_js_alter(&$javascript) {
+
+	// Init
+	global $theme;
+	$jquery_path = '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js';
+
+	// If the theme is not the climAdmin theme
+	if ( $theme !== 'climAdmin' ) {
+
+		// Update jQuery
+		$javascript['misc/jquery.js']['data'] = $jquery_path;	
+
+	}
+	
+}
